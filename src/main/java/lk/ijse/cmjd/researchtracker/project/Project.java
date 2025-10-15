@@ -3,6 +3,7 @@ package lk.ijse.cmjd.researchtracker.project;
 import jakarta.persistence.*;
 import lk.ijse.cmjd.researchtracker.user.User;
 import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -17,36 +18,30 @@ import java.util.UUID;
 public class Project {
 
     @Id
-    private String id = UUID.randomUUID().toString();
+    private String id;
 
     @Column(nullable = false)
     private String title;
 
+    @Column(length = 1000)
     private String summary;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status = Status.PLANNING;
+    private Status status;
 
     @ManyToOne
-    @JoinColumn(name = "pi_id")
+    @JoinColumn(name = "pi_id", nullable = false)
     private User pi;
 
-    private String tags; // comma-separated tags
+    // Comma-separated tags (e.g., "AI, environment")
+    private String tags;
 
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
-    public enum Status {
-        PLANNING,
-        ACTIVE,
-        ON_HOLD,
-        COMPLETED,
-        ARCHIVED
-    }
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @ManyToMany
     @JoinTable(
@@ -56,4 +51,20 @@ public class Project {
     )
     private Set<User> members = new HashSet<>();
 
+    public enum Status {
+        PLANNING, ACTIVE, ON_HOLD, COMPLETED, ARCHIVED
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.id == null) this.id = UUID.randomUUID().toString();
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
