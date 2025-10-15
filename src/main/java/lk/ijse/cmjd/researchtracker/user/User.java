@@ -18,7 +18,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class User implements UserDetails {
     @Id
-    private String id = UUID.randomUUID().toString();
+    private String id;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -32,11 +32,16 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private UserRole role;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.id == null) this.id = UUID.randomUUID().toString();
+        if (this.createdAt == null) this.createdAt = LocalDateTime.now();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Spring expects roles to be prefixed with "ROLE_"
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
