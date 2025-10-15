@@ -1,8 +1,11 @@
 package lk.ijse.cmjd.researchtracker.auth;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +13,13 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    private final String JWT_SECRET = "verysecretkey";
-    private final long JWT_EXPIRATION = 1000 * 60 * 60 * 24; // 24 hours
+    // Use a secure, long key (at least 32 chars!)
+    private static final String JWT_SECRET = "MyUltraSecureSuperLongSecretKey123456!@#";
+    private static final long JWT_EXPIRATION = 1000 * 60 * 60 * 24; // 24 hours
+
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateToken(String username, String role) {
         Map<String, Object> claims = new HashMap<>();
@@ -21,7 +29,7 @@ public class JwtUtil {
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
-                .signWith(SignatureAlgorithm.HS256, JWT_SECRET)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -44,7 +52,11 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public boolean isTokenExpired(String token) {

@@ -2,6 +2,7 @@ package lk.ijse.cmjd.researchtracker.document;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class DocumentController {
     private final DocumentService documentService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
     public ResponseEntity<Document> createDocument(
             @RequestBody Document document,
             @RequestParam String projectId,
@@ -23,6 +25,7 @@ public class DocumentController {
     }
 
     @GetMapping("/project/{projectId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Document>> getDocumentsByProject(@PathVariable String projectId) {
         return ResponseEntity.ok(documentService.getDocumentsByProject(projectId));
     }
@@ -35,11 +38,13 @@ public class DocumentController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
     public ResponseEntity<Document> updateDocument(@PathVariable String id, @RequestBody Document updated) {
         return ResponseEntity.ok(documentService.updateDocument(id, updated));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
     public ResponseEntity<?> deleteDocument(@PathVariable String id) {
         documentService.deleteDocument(id);
         return ResponseEntity.noContent().build();

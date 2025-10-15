@@ -2,6 +2,7 @@ package lk.ijse.cmjd.researchtracker.milestone;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class MilestoneController {
     private final MilestoneService milestoneService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
     public ResponseEntity<Milestone> createMilestone(
             @RequestBody Milestone milestone,
             @RequestParam String projectId,
@@ -23,6 +25,7 @@ public class MilestoneController {
     }
 
     @GetMapping("/project/{projectId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Milestone>> getMilestonesByProject(@PathVariable String projectId) {
         return ResponseEntity.ok(milestoneService.getMilestonesByProject(projectId));
     }
@@ -35,11 +38,13 @@ public class MilestoneController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
     public ResponseEntity<Milestone> updateMilestone(@PathVariable String id, @RequestBody Milestone updated) {
         return ResponseEntity.ok(milestoneService.updateMilestone(id, updated));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
     public ResponseEntity<?> deleteMilestone(@PathVariable String id) {
         milestoneService.deleteMilestone(id);
         return ResponseEntity.noContent().build();
