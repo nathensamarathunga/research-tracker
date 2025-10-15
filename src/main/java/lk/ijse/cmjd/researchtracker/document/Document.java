@@ -29,6 +29,8 @@ public class Document {
     // This can be a file URL or a path on the server
     private String urlOrPath;
 
+    private String fileType;
+
     @ManyToOne
     @JoinColumn(name = "uploaded_by")
     private User uploadedBy;
