@@ -48,6 +48,22 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('ADMIN','PI')")
+    public ResponseEntity<Project> updateProjectStatus(
+            @PathVariable String id,
+            @RequestBody UpdateStatusRequest request
+    ) {
+        Project updated = projectService.updateStatus(id, request.getStatus());
+        return ResponseEntity.ok(updated);
+    }
+
+    public static class UpdateStatusRequest {
+        private Project.Status status;
+        public Project.Status getStatus() { return status; }
+        public void setStatus(Project.Status status) { this.status = status; }
+    }
+
     // Add a member
     @PostMapping("/{projectId}/members")
     @PreAuthorize("hasAnyRole('ADMIN','PI')")

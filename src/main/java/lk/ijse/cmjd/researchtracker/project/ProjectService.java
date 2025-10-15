@@ -5,6 +5,7 @@ import lk.ijse.cmjd.researchtracker.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -71,5 +72,13 @@ public class ProjectService {
 
     public void deleteProject(String id) {
         projectRepository.deleteById(id);
+    }
+
+    public Project updateStatus(String projectId, Project.Status status) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        project.setStatus(status);
+        project.setUpdatedAt(LocalDateTime.now());
+        return projectRepository.save(project);
     }
 }
