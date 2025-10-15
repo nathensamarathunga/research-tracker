@@ -56,7 +56,19 @@ public class DocumentService {
     }
 
     public void deleteDocument(String id) {
-        documentRepository.deleteById(id);
+        Document doc = documentRepository.findById(id).orElse(null);
+        if (doc != null) {
+            // Delete file from disk
+            if (doc.getUrlOrPath() != null) {
+                try {
+                    java.nio.file.Files.deleteIfExists(java.nio.file.Path.of(doc.getUrlOrPath()));
+                } catch (Exception e) {
+                    // Optionally log the error, but continue to delete the DB record
+                    e.printStackTrace();
+                }
+            }
+            documentRepository.deleteById(id);
+        }
     }
 
     public Document uploadFile(MultipartFile file, String projectId, String uploaderUsername, String title, String description) throws IOException {
