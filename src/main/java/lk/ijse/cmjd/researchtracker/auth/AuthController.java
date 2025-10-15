@@ -16,4 +16,10 @@ public class AuthController {
         authService.register(request);
         return ResponseEntity.ok("User registered successfully!");
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        String jwt = authService.login(request);
+        return ResponseEntity.ok(jwt);
+    }
 }
