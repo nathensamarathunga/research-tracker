@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/documents")
@@ -18,6 +17,7 @@ import java.util.Optional;
 public class DocumentController {
     private final DocumentService documentService;
 
+    // --- Create a document (metadata only, not file) ---
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
     public ResponseEntity<Document> createDocument(
@@ -27,32 +27,6 @@ public class DocumentController {
     ) {
         Document created = documentService.createDocument(document, projectId, uploaderUsername);
         return ResponseEntity.ok(created);
-    }
-
-    @GetMapping("/project/{projectId}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Document>> getDocumentsByProject(@PathVariable String projectId) {
-        return ResponseEntity.ok(documentService.getDocumentsByProject(projectId));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Document> getDocumentById(@PathVariable String id) {
-        return documentService.getDocumentById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
-    public ResponseEntity<Document> updateDocument(@PathVariable String id, @RequestBody Document updated) {
-        return ResponseEntity.ok(documentService.updateDocument(id, updated));
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
-    public ResponseEntity<?> deleteDocument(@PathVariable String id) {
-        documentService.deleteDocument(id);
-        return ResponseEntity.noContent().build();
     }
 
     // --- File upload endpoint ---
@@ -73,28 +47,60 @@ public class DocumentController {
         }
     }
 
-    // --- File download endpoint ---
-    @GetMapping("/download/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
-    public ResponseEntity<Resource> downloadDocument(@PathVariable String id) {
-        Optional<Document> docOpt = documentService.getDocumentById(id);
-        if (docOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Document doc = docOpt.get();
-        try {
-            Path filePath = Path.of(doc.getUrlOrPath());
-            Resource resource = new UrlResource(filePath.toUri());
-            if (!resource.exists()) {
-                return ResponseEntity.notFound().build();
-            }
+    // --- List documents for a project ---
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER')")
+    public ResponseEntity<List<Document>> getDocumentsByProject(
+            @RequestParam("projectId") String projectId
+    ) {
+        List<Document> docs = documentService.getDocumentsByProject(projectId);
+        return ResponseEntity.ok(docs);
+    }
 
+    // --- Get details of a document ---
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER')")
+    public ResponseEntity<Document> getDocumentById(@PathVariable String id) {
+        return documentService.getDocumentById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // --- Download a document file ---
+    @GetMapping("/{id}/download")
+    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER')")
+    public ResponseEntity<Resource> downloadDocument(@PathVariable String id) {
+        Path filePath = documentService.getFilePathByDocumentId(id)
+                .orElseThrow(() -> new RuntimeException("Document or file not found"));
+        try {
+            Resource resource = new UrlResource(filePath.toUri());
+            String contentType = "application/octet-stream";
+            Document doc = documentService.getDocumentById(id).orElse(null);
+            String fileName = (doc != null && doc.getTitle() != null) ? doc.getTitle() : filePath.getFileName().toString();
+            if (doc != null && doc.getFileType() != null) {
+                contentType = doc.getFileType();
+            }
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(doc.getFileType()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getTitle() + "\"")
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                     .body(resource);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.notFound().build();
         }
+    }
+
+    // --- Update a document ---
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
+    public ResponseEntity<Document> updateDocument(@PathVariable String id, @RequestBody Document updated) {
+        return ResponseEntity.ok(documentService.updateDocument(id, updated));
+    }
+
+    // --- Delete a document ---
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
+    public ResponseEntity<?> deleteDocument(@PathVariable String id) {
+        documentService.deleteDocument(id);
+        return ResponseEntity.noContent().build();
     }
 }
