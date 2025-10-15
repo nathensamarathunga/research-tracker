@@ -5,7 +5,7 @@ import lk.ijse.cmjd.researchtracker.project.Project;
 import lk.ijse.cmjd.researchtracker.user.User;
 import lombok.*;
 import java.time.LocalDate;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "milestones")
@@ -15,10 +15,10 @@ import java.util.UUID;
 public class Milestone {
 
     @Id
-    private String id = UUID.randomUUID().toString();
+    private String id;
 
     @ManyToOne
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
     @Column(nullable = false)
@@ -33,4 +33,6 @@ public class Milestone {
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy;
+
+    private LocalDateTime createdAt;
 }

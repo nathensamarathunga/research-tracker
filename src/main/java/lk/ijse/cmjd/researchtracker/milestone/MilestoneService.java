@@ -7,8 +7,10 @@ import lk.ijse.cmjd.researchtracker.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -17,12 +19,16 @@ public class MilestoneService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
 
-    public Milestone createMilestone(Milestone milestone, String projectId, String creatorUsername) {
+    public Milestone createMilestone(String projectId, Milestone milestone, String creatorUsername) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
         User creator = userRepository.findByUsername(creatorUsername);
+        if (creator == null) throw new RuntimeException("User not found");
+        milestone.setId(UUID.randomUUID().toString());
         milestone.setProject(project);
         milestone.setCreatedBy(creator);
+        milestone.setCreatedAt(LocalDateTime.now());
+        milestone.setCompleted(false);
         return milestoneRepository.save(milestone);
     }
 

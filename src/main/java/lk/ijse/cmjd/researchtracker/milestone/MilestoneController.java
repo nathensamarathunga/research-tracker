@@ -8,42 +8,38 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/milestones")
 @RequiredArgsConstructor
 public class MilestoneController {
     private final MilestoneService milestoneService;
 
-    @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
-    public ResponseEntity<Milestone> createMilestone(
-            @RequestBody Milestone milestone,
-            @RequestParam String projectId,
-            @RequestParam String creatorUsername
-    ) {
-        Milestone created = milestoneService.createMilestone(milestone, projectId, creatorUsername);
-        return ResponseEntity.ok(created);
-    }
-
-    @GetMapping("/project/{projectId}")
+    // List milestones for a project
+    @GetMapping("/api/projects/{projectId}/milestones")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Milestone>> getMilestonesByProject(@PathVariable String projectId) {
         return ResponseEntity.ok(milestoneService.getMilestonesByProject(projectId));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Milestone> getMilestoneById(@PathVariable String id) {
-        return milestoneService.getMilestoneById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    // Add milestone
+    @PostMapping("/api/projects/{projectId}/milestones")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
+    public ResponseEntity<Milestone> createMilestone(
+            @PathVariable String projectId,
+            @RequestBody Milestone milestone,
+            @RequestParam String creatorUsername
+    ) {
+        Milestone created = milestoneService.createMilestone(projectId, milestone, creatorUsername);
+        return ResponseEntity.ok(created);
     }
 
-    @PutMapping("/{id}")
+    // Update milestone
+    @PutMapping("/api/milestones/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
     public ResponseEntity<Milestone> updateMilestone(@PathVariable String id, @RequestBody Milestone updated) {
         return ResponseEntity.ok(milestoneService.updateMilestone(id, updated));
     }
 
-    @DeleteMapping("/{id}")
+    // Delete milestone
+    @DeleteMapping("/api/milestones/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'PI', 'MEMBER')")
     public ResponseEntity<?> deleteMilestone(@PathVariable String id) {
         milestoneService.deleteMilestone(id);
