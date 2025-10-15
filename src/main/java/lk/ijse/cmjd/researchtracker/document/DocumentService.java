@@ -38,7 +38,7 @@ public class DocumentService {
         return documentRepository.findById(id).map(doc -> {
             doc.setTitle(updated.getTitle());
             doc.setDescription(updated.getDescription());
-            doc.setUrl(updated.getUrl());
+            doc.setUrlOrPath(updated.getUrlOrPath());
             doc.setUploadedAt(updated.getUploadedAt());
             return documentRepository.save(doc);
         }).orElseThrow(() -> new RuntimeException("Document not found"));
