@@ -10,6 +10,7 @@ import DocumentsPage from "./pages/DocumentsPage";
 import AdminPage from "./pages/AdminPage";
 import { AuthProvider } from "./auth/AuthContext";
 import PrivateRoute from "./auth/PrivateRoute";
+import UserProfilePage from "./pages/UserProfilePage";
 
 const App: React.FC = () => (
     <AuthProvider>
@@ -61,6 +62,14 @@ const App: React.FC = () => (
                 />
                 {/* Catch all */}
                 <Route path="*" element={<Navigate to="/" />} />
+                <Route
+                    path="/profile"
+                    element={
+                        <PrivateRoute>
+                            <UserProfilePage />
+                        </PrivateRoute>
+                    }
+                />
             </Routes>
         </Router>
     </AuthProvider>
