@@ -10,6 +10,7 @@ const ProjectsPage: React.FC = () => {
     const [error, setError] = useState<string>("");
     const [showForm, setShowForm] = useState(false);
     const [editProject, setEditProject] = useState<Project | null>(null);
+    const [deleteLoadingId, setDeleteLoadingId] = useState<string | null>(null);
 
     const fetchProjects = async () => {
         setLoading(true);
@@ -47,6 +48,29 @@ const ProjectsPage: React.FC = () => {
         fetchProjects();
     };
 
+    const handleDelete = async (projectId: string) => {
+        if (
+            !window.confirm(
+                "Are you sure you want to delete this project? This action cannot be undone."
+            )
+        )
+            return;
+        setDeleteLoadingId(projectId);
+        setError("");
+        try {
+            await axios.delete(`/projects/${projectId}`);
+            fetchProjects();
+        } catch (err: any) {
+            setError(
+                err?.response?.data?.error ||
+                err?.message ||
+                "Failed to delete project"
+            );
+        } finally {
+            setDeleteLoadingId(null);
+        }
+    };
+
     return (
         <div className="container">
             <h2>Projects</h2>
@@ -63,7 +87,10 @@ const ProjectsPage: React.FC = () => {
                         projectId={editProject?.id}
                         onSuccess={handleFormSuccess}
                     />
-                    <button className="btn btn-secondary mt-2" onClick={() => setShowForm(false)}>
+                    <button
+                        className="btn btn-secondary mt-2"
+                        onClick={() => setShowForm(false)}
+                    >
                         Cancel
                     </button>
                 </div>
@@ -91,18 +118,30 @@ const ProjectsPage: React.FC = () => {
                                 <tr key={project.id}>
                                     <td>{project.title}</td>
                                     <td>{project.status}</td>
-                                    <td>{project.pi?.fullName || project.pi?.username}</td>
+                                    <td>
+                                        {project.pi?.fullName || project.pi?.username}
+                                    </td>
                                     <td>{project.tags}</td>
                                     <td>{project.startDate || "-"}</td>
                                     <td>{project.endDate || "-"}</td>
                                     <td>
                                         <button
-                                            className="btn btn-sm btn-warning"
+                                            className="btn btn-sm btn-warning me-2"
                                             onClick={() => handleEdit(project)}
                                         >
                                             Edit
                                         </button>
-                                        {/* Add Delete button as needed */}
+                                        <button
+                                            className="btn btn-sm btn-danger"
+                                            disabled={deleteLoadingId === project.id}
+                                            onClick={() => handleDelete(project.id)}
+                                        >
+                                            {deleteLoadingId === project.id ? (
+                                                <span className="spinner-border spinner-border-sm" />
+                                            ) : (
+                                                "Delete"
+                                            )}
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
