@@ -1,4 +1,5 @@
 import { User } from "./User";
+export type ProjectStatus = "PLANNING" | "ACTIVE" | "ON_HOLD" | "COMPLETED" | "ARCHIVED";
 
 export interface Project {
     id: string;
