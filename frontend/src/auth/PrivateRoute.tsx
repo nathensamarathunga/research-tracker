@@ -2,10 +2,22 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
-const PrivateRoute: React.FC<{ children: React.ReactNode; role?: string }> = ({ children, role }) => {
-    const { token, role: userRole } = useAuth();
-    if (!token) return <Navigate to="/login" />;
-    if (role && userRole !== role) return <Navigate to="/projects" />;
+interface Props {
+    children: React.ReactNode;
+    roles?: string[]; // Optional: restrict by role
+}
+
+const PrivateRoute: React.FC<Props> = ({ children, roles }) => {
+    const { user, role } = useAuth();
+
+    if (!user) {
+        return <Navigate to="/login" />;
+    }
+
+    if (roles && (!role || !roles.includes(role))) {
+        return <Navigate to="/" />; // or show "unauthorized"
+    }
+
     return <>{children}</>;
 };
 
