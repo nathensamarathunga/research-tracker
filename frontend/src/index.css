@@ -1,9 +1,9 @@
 :root {
-    --spud-dark: #262223;
-    --spud-light-accent: #F2CEF2;
-    --spud-purple: #AC07F2;
-    --spud-purple-light: #BA38F2;
-    --spud-bg-light: #F2F2F2;
+    --spud-dark: #000000;         /* luxury-swimming-pool-in-santorini.-3d-rendering-1 (main dark blue) */
+    --spud-light-accent: #ffffff; /* luxury-swimming-pool-in-santorini.-3d-rendering-2 (blue-grey) */
+    --spud-purple: #5f64c6;       /* luxury-swimming-pool-in-santorini.-3d-rendering-3 (vivid pool blue) */
+    --spud-purple-light: #000000; /* luxury-swimming-pool-in-santorini.-3d-rendering-4 (accent light blue) */
+    --spud-bg-light: #c4f2fb;     /* luxury-swimming-pool-in-santorini.-3d-rendering-5 (very light turquoise) */
 }
 
 body {
@@ -54,5 +54,5 @@ code {
     background: var(--spud-light-accent);
     border-radius: 1rem;
     padding: 2rem;
-    box-shadow: 0 3px 16px rgba(38,34,35,0.08);
+    box-shadow: 0 3px 16px rgba(56,92,166,0.08);
 }
