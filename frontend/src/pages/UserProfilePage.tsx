@@ -40,8 +40,8 @@ const UserProfilePage: React.FC = () => {
     if (!profile) return <div className="alert alert-warning">Profile not found.</div>;
 
     return (
-        <div className="container" style={{maxWidth: 400}}>
-            <h2>User Profile</h2>
+        <div className="container card-spud" style={{maxWidth: 400}}>
+            <h2 style={{ color: "var(--spud-purple)", fontWeight: "bold" }}>User Profile</h2>
             <div className="mb-2"><strong>Username:</strong> {profile.username}</div>
             <div className="mb-2"><strong>Full Name:</strong> {profile.fullName}</div>
             <div className="mb-2"><strong>Role:</strong> {profile.role}</div>

@@ -111,11 +111,11 @@ const ProjectDetailsPage: React.FC = () => {
     if (!project) return <div className="alert alert-warning">Project not found</div>;
 
     return (
-        <div className="container">
-            <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}>
+        <div className="container card-spud">
+            <button className="btn btn-spud-secondary mb-3" onClick={() => navigate(-1)}>
                 &larr; Back
             </button>
-            <h2>{project.title}</h2>
+            <h2 style={{ color: "var(--spud-purple)", fontWeight: "bold" }}>{project.title}</h2>
             <p><strong>Status:</strong> {project.status}</p>
             <p><strong>Principal Investigator:</strong> {project.pi?.fullName} ({project.pi?.username})</p>
             <p><strong>Tags:</strong> {project.tags}</p>
@@ -133,7 +133,7 @@ const ProjectDetailsPage: React.FC = () => {
                         {m.fullName} ({m.username}) [{m.role}]
                         {(role === "ADMIN" || role === "PI") && m.username !== project.pi?.username && (
                             <button
-                                className="btn btn-sm btn-outline-danger ms-2"
+                                className="btn btn-sm btn-spud-secondary ms-2"
                                 onClick={() => handleRemoveMember(m.username)}
                                 disabled={memberLoading}
                             >Remove</button>
@@ -163,7 +163,7 @@ const ProjectDetailsPage: React.FC = () => {
                             ))}
                     </select>
                     <button
-                        className="btn btn-success mt-2"
+                        className="btn btn-spud-primary mt-2"
                         onClick={handleAddMember}
                         disabled={memberLoading || !addMemberUsername}
                     >

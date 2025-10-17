@@ -50,12 +50,12 @@ const AdminPage: React.FC = () => {
     };
 
     if (role !== "ADMIN") {
-        return <div className="container"><div className="alert alert-danger my-4">You are not authorized to view this page.</div></div>;
+        return <div className="container card-spud"><div className="alert alert-danger my-4">You are not authorized to view this page.</div></div>;
     }
 
     return (
-        <div className="container">
-            <h2>Admin Dashboard</h2>
+        <div className="container card-spud">
+            <h2 style={{ color: "var(--spud-purple)", fontWeight: "bold" }}>Admin Dashboard</h2>
             <h4 className="mb-3">User Management</h4>
             {loading && <Loader />}
             {error && <div className="alert alert-danger">{error}</div>}
@@ -63,7 +63,7 @@ const AdminPage: React.FC = () => {
                 <div className="alert alert-info">No users found.</div>
             )}
             {users.length > 0 && (
-                <table className="table table-bordered">
+                <table className="table table-bordered table-spud">
                     <thead>
                     <tr>
                         <th>Username</th>

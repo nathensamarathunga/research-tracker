@@ -173,7 +173,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                     </select>
                 </div>
             )}
-            <button className="btn btn-success" type="submit" disabled={loading}>
+            <button className="btn btn-spud-primary" type="submit" disabled={loading}>
                 {mode === "create" ? "Create Project" : "Update Project"}
             </button>
         </form>

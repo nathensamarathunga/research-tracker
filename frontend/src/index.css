@@ -1,13 +1,58 @@
+:root {
+    --spud-dark: #262223;
+    --spud-light-accent: #F2CEF2;
+    --spud-purple: #AC07F2;
+    --spud-purple-light: #BA38F2;
+    --spud-bg-light: #F2F2F2;
+}
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    background: var(--spud-bg-light);
+    color: var(--spud-dark);
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.btn-spud-primary {
+    background: var(--spud-purple);
+    color: #fff;
+    border: none;
+}
+.btn-spud-primary:hover, .btn-spud-primary:focus {
+    background: var(--spud-purple-light);
+    color: #fff;
+}
+
+.btn-spud-secondary {
+    background: var(--spud-light-accent);
+    color: var(--spud-dark);
+    border: none;
+}
+.btn-spud-secondary:hover, .btn-spud-secondary:focus {
+    background: var(--spud-purple-light);
+    color: #fff;
+}
+
+.table-spud th {
+    background: var(--spud-light-accent) !important;
+    color: var(--spud-dark);
+}
+
+.form-control, .form-select {
+    border-radius: 0.3rem;
+    border: 1px solid var(--spud-purple-light);
+}
+
+.card-spud {
+    background: var(--spud-light-accent);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 3px 16px rgba(38,34,35,0.08);
 }

@@ -29,25 +29,25 @@ const RegisterPage: React.FC = () => {
     };
 
     return (
-        <div className="container" style={{maxWidth: 400}}>
-            <h2>Register</h2>
+        <div className="container card-spud" style={{maxWidth: 400}}>
+            <h2 style={{ color: "var(--spud-purple)", fontWeight: "bold" }}>Register</h2>
             {loading && <Loader />}
             {error && <div className="alert alert-danger">{error}</div>}
             {success && <div className="alert alert-success">{success}</div>}
             <form onSubmit={handleSubmit}>
                 <div className="mb-2">
-                    <label>Full Name</label>
+                    <label style={{ color: "var(--spud-dark)" }}>Full Name</label>
                     <input className="form-control" value={fullName} onChange={e => setFullName(e.target.value)} required />
                 </div>
                 <div className="mb-2">
-                    <label>Username</label>
+                    <label style={{ color: "var(--spud-dark)" }}>Username</label>
                     <input className="form-control" value={username} onChange={e => setUsername(e.target.value)} required />
                 </div>
                 <div className="mb-2">
-                    <label>Password</label>
+                    <label style={{ color: "var(--spud-dark)" }}>Password</label>
                     <input className="form-control" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                 </div>
-                <button className="btn btn-primary" type="submit" disabled={loading}>Register</button>
+                <button className="btn btn-spud-primary" type="submit" disabled={loading}>Register</button>
             </form>
         </div>
     );

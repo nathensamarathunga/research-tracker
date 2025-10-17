@@ -88,12 +88,12 @@ const ProjectsPage: React.FC = () => {
     const canEdit = role === "ADMIN" || role === "PI" || role === "MEMBER";
 
     return (
-        <div className="container">
-            <h2>Projects</h2>
+        <div className="container card-spud">
+            <h2 style={{ color: "var(--spud-purple)", fontWeight: "bold" }}>Projects</h2>
             {loading && <Loader />}
             {error && <div className="alert alert-danger my-3">{error}</div>}
             {canEdit && (
-                <button className="btn btn-primary mb-3" onClick={handleCreate}>
+                <button className="btn btn-spud-primary mb-3" onClick={handleCreate}>
                     Create Project
                 </button>
             )}
@@ -106,7 +106,7 @@ const ProjectsPage: React.FC = () => {
                         onSuccess={handleFormSuccess}
                     />
                     <button
-                        className="btn btn-secondary mt-2"
+                        className="btn btn-spud-secondary mt-2"
                         onClick={() => setShowForm(false)}
                     >
                         Cancel
@@ -119,8 +119,8 @@ const ProjectsPage: React.FC = () => {
                         <div className="alert alert-info my-3">No projects found. You are not assigned to any project yet.</div>
                     )}
                     {projects.length > 0 && (
-                        <table className="table table-bordered table-hover mt-3">
-                            <thead className="table-light">
+                        <table className="table table-bordered table-hover mt-3 table-spud">
+                            <thead>
                             <tr>
                                 <th>Title</th>
                                 <th>Status</th>
@@ -147,7 +147,7 @@ const ProjectsPage: React.FC = () => {
                                     {canEdit && (
                                         <td>
                                             <button
-                                                className="btn btn-sm btn-warning me-2"
+                                                className="btn btn-sm btn-spud-secondary me-2"
                                                 onClick={() => handleEdit(project)}
                                             >
                                                 Edit

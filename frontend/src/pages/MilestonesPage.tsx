@@ -121,16 +121,16 @@ const MilestonesPage: React.FC = () => {
     };
 
     return (
-        <div className="container">
-            <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}>
+        <div className="container card-spud">
+            <button className="btn btn-spud-secondary mb-3" onClick={() => navigate(-1)}>
                 &larr; Back to Project
             </button>
-            <h2>Milestones</h2>
+            <h2 style={{ color: "var(--spud-purple)", fontWeight: "bold" }}>Milestones</h2>
             {loading && <Loader />}
             {error && <div className="alert alert-danger">{error}</div>}
 
             {canEdit && !showForm && (
-                <button className="btn btn-primary mb-3" onClick={() => setShowForm(true)}>
+                <button className="btn btn-spud-primary mb-3" onClick={() => setShowForm(true)}>
                     Add Milestone
                 </button>
             )}
@@ -161,10 +161,10 @@ const MilestonesPage: React.FC = () => {
                             <label className="form-check-label" htmlFor="isCompleted">Completed</label>
                         </div>
                     )}
-                    <button className="btn btn-success me-2" type="submit" disabled={formLoading}>
+                    <button className="btn btn-spud-primary me-2" type="submit" disabled={formLoading}>
                         {editMilestone ? "Update" : "Add"}
                     </button>
-                    <button className="btn btn-secondary" type="button" onClick={resetForm} disabled={formLoading}>Cancel</button>
+                    <button className="btn btn-spud-secondary" type="button" onClick={resetForm} disabled={formLoading}>Cancel</button>
                 </form>
             )}
 
@@ -173,7 +173,7 @@ const MilestonesPage: React.FC = () => {
             )}
 
             {milestones.length > 0 && (
-                <table className="table table-bordered">
+                <table className="table table-bordered table-spud">
                     <thead>
                     <tr>
                         <th>Title</th>
@@ -196,7 +196,7 @@ const MilestonesPage: React.FC = () => {
                             <td>{m.createdAt ? m.createdAt.substring(0, 16).replace("T", " ") : "-"}</td>
                             {canEdit && (
                                 <td>
-                                    <button className="btn btn-sm btn-warning me-2" onClick={() => handleEdit(m)}>
+                                    <button className="btn btn-sm btn-spud-secondary me-2" onClick={() => handleEdit(m)}>
                                         Edit
                                     </button>
                                     <button className="btn btn-sm btn-danger" onClick={() => handleDelete(m.id)} disabled={formLoading}>

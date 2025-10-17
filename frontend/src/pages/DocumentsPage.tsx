@@ -111,11 +111,11 @@ const DocumentsPage: React.FC = () => {
     };
 
     return (
-        <div className="container">
-            <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}>
+        <div className="container card-spud">
+            <button className="btn btn-spud-secondary mb-3" onClick={() => navigate(-1)}>
                 &larr; Back to Project
             </button>
-            <h2>Documents</h2>
+            <h2 style={{ color: "var(--spud-purple)", fontWeight: "bold" }}>Documents</h2>
             {loading && <Loader />}
             {error && <div className="alert alert-danger">{error}</div>}
 
@@ -133,7 +133,7 @@ const DocumentsPage: React.FC = () => {
                         <label>File</label>
                         <input className="form-control" type="file" ref={fileInputRef} required />
                     </div>
-                    <button className="btn btn-success" type="submit" disabled={uploading}>
+                    <button className="btn btn-spud-primary" type="submit" disabled={uploading}>
                         {uploading ? <span className="spinner-border spinner-border-sm" /> : "Upload"}
                     </button>
                 </form>
@@ -144,7 +144,7 @@ const DocumentsPage: React.FC = () => {
             )}
 
             {documents.length > 0 && (
-                <table className="table table-bordered">
+                <table className="table table-bordered table-spud">
                     <thead>
                     <tr>
                         <th>Title</th>
@@ -171,7 +171,7 @@ const DocumentsPage: React.FC = () => {
                             </td>
                             <td>
                                 <button
-                                    className="btn btn-sm btn-primary me-2"
+                                    className="btn btn-sm btn-spud-primary me-2"
                                     onClick={() => handleDownload(doc.id, doc.title)}
                                 >
                                     Download
