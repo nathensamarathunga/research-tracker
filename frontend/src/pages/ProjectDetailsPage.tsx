@@ -50,13 +50,13 @@ const ProjectDetailsPage: React.FC = () => {
         fetchMembers();
     }, [id, project]);
 
-    // Fetch all users for adding as members (ADMIN/PI only)
+    // Fetch all users for adding as members (ADMIN/PI only) - use correct endpoint
     useEffect(() => {
         const fetchAllUsers = async () => {
             if (role === "ADMIN" || role === "PI") {
                 try {
-                    // Ideally should use /users/all-for-membership for correct filtering
-                    const res = await axios.get<User[]>("/users");
+                    // Use the correct endpoint to get all users except admins
+                    const res = await axios.get<User[]>("/users/all-for-membership");
                     setAllUsers(res.data);
                 } catch {
                     setAllUsers([]);
