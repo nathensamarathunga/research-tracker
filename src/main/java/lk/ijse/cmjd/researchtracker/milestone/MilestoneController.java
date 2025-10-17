@@ -14,7 +14,7 @@ public class MilestoneController {
 
     // List milestones for a project
     @GetMapping("/api/projects/{projectId}/milestones")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER','VIEWER')")
     public ResponseEntity<List<Milestone>> getMilestonesByProject(@PathVariable String projectId) {
         return ResponseEntity.ok(milestoneService.getMilestonesByProject(projectId));
     }

@@ -23,12 +23,13 @@ public class ProjectController {
     }
 
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER','VIEWER')")
     public ResponseEntity<List<Project>> getAllProjects() {
         return ResponseEntity.ok(projectService.getAllProjects());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER','VIEWER')")
     public ResponseEntity<Project> getProjectById(@PathVariable String id) {
         return projectService.getProjectById(id)
                 .map(ResponseEntity::ok)

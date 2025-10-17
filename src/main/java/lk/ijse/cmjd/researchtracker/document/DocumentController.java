@@ -49,7 +49,7 @@ public class DocumentController {
 
     // --- List documents for a project ---
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER')")
+    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER','VIEWER')")
     public ResponseEntity<List<Document>> getDocumentsByProject(
             @RequestParam("projectId") String projectId
     ) {
@@ -59,7 +59,7 @@ public class DocumentController {
 
     // --- Get details of a document ---
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER')")
+    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER','VIEWER')")
     public ResponseEntity<Document> getDocumentById(@PathVariable String id) {
         return documentService.getDocumentById(id)
                 .map(ResponseEntity::ok)
@@ -68,7 +68,7 @@ public class DocumentController {
 
     // --- Download a document file ---
     @GetMapping("/{id}/download")
-    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER')")
+    @PreAuthorize("hasAnyRole('ADMIN','PI','MEMBER','VIEWER')")
     public ResponseEntity<Resource> downloadDocument(@PathVariable String id) {
         Path filePath = documentService.getFilePathByDocumentId(id)
                 .orElseThrow(() -> new RuntimeException("Document or file not found"));
