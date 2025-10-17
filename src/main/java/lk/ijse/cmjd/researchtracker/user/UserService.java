@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -13,6 +14,12 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<User> getPIUsers() {
+        return userRepository.findAll().stream()
+                .filter(u -> u.getRole() == UserRole.PI)
+                .collect(Collectors.toList());
     }
 
     public Optional<User> getUserById(String id) {

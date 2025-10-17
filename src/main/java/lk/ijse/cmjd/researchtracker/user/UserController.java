@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -19,6 +20,16 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    // List all users for project membership (Admin and PI), EXCLUDING ADMINS
+    @GetMapping("/all-for-membership")
+    @PreAuthorize("hasAnyRole('ADMIN','PI')")
+    public ResponseEntity<List<User>> getAllForMembership() {
+        List<User> usersNoAdmins = userService.getAllUsers().stream()
+                .filter(u -> u.getRole() != UserRole.ADMIN)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(usersNoAdmins);
     }
 
     // Get user profile by ID

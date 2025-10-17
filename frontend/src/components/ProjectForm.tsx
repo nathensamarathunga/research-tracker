@@ -32,10 +32,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
     useEffect(() => {
         if (mode === "create") {
-            (async function fetchUsers() {
+            (async function fetchPIUsers() {
                 setLoading(true);
                 try {
-                    const res = await axios.get<User[]>("/users");
+                    const res = await axios.get<User[]>("/users/role/PI");
                     setAllUsers(res.data);
                 } catch {
                     setAllUsers([]);

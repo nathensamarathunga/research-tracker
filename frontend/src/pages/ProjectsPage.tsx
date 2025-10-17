@@ -4,6 +4,7 @@ import { Project } from "../types/Project";
 import Loader from "../components/Loader";
 import ProjectForm from "../components/ProjectForm";
 import { useAuth } from "../auth/AuthContext";
+import { Link } from "react-router-dom";
 
 const ProjectsPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -135,7 +136,16 @@ const ProjectsPage: React.FC = () => {
                             {projects.map((project) => (
                                 <tr key={project.id}>
                                     <td>
-                                        {project.title}
+                                        <Link
+                                            to={`/projects/${project.id}`}
+                                            style={{
+                                                color: "var(--spud-purple)",
+                                                textDecoration: "underline",
+                                                cursor: "pointer"
+                                            }}
+                                        >
+                                            {project.title}
+                                        </Link>
                                     </td>
                                     <td>{project.status}</td>
                                     <td>
