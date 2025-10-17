@@ -3,6 +3,7 @@ import axios from "../api/axiosInstance";
 import { Project } from "../types/Project";
 import Loader from "../components/Loader";
 import ProjectForm from "../components/ProjectForm";
+import { useAuth } from "../auth/AuthContext";
 
 const ProjectsPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -11,13 +12,20 @@ const ProjectsPage: React.FC = () => {
     const [showForm, setShowForm] = useState(false);
     const [editProject, setEditProject] = useState<Project | null>(null);
     const [deleteLoadingId, setDeleteLoadingId] = useState<string | null>(null);
+    const { user } = useAuth();
 
     const fetchProjects = async () => {
         setLoading(true);
         setError("");
         try {
             const res = await axios.get<Project[]>("/projects");
-            setProjects(res.data);
+            // Filter projects: show only those where user is PI or a member
+            const filtered = res.data.filter(
+                (project) =>
+                    project.pi?.username === user ||
+                    (project.members && project.members.some(m => m.username === user))
+            );
+            setProjects(filtered);
         } catch (err: any) {
             setError(
                 err?.response?.data?.error ||
@@ -31,7 +39,8 @@ const ProjectsPage: React.FC = () => {
 
     useEffect(() => {
         fetchProjects();
-    }, []);
+        // eslint-disable-next-line
+    }, [user]);
 
     const handleCreate = () => {
         setEditProject(null);
@@ -98,7 +107,7 @@ const ProjectsPage: React.FC = () => {
             {!loading && !error && (
                 <>
                     {projects.length === 0 && (
-                        <div className="alert alert-info my-3">No projects found.</div>
+                        <div className="alert alert-info my-3">No projects found. You are not assigned to any project yet.</div>
                     )}
                     {projects.length > 0 && (
                         <table className="table table-bordered table-hover mt-3">
