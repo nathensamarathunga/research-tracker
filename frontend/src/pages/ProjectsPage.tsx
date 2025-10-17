@@ -12,19 +12,23 @@ const ProjectsPage: React.FC = () => {
     const [showForm, setShowForm] = useState(false);
     const [editProject, setEditProject] = useState<Project | null>(null);
     const [deleteLoadingId, setDeleteLoadingId] = useState<string | null>(null);
-    const { user } = useAuth();
+    const { user, role } = useAuth();
 
     const fetchProjects = async () => {
         setLoading(true);
         setError("");
         try {
             const res = await axios.get<Project[]>("/projects");
-            // Filter projects: show only those where user is PI or a member
-            const filtered = res.data.filter(
-                (project) =>
-                    project.pi?.username === user ||
-                    (project.members && project.members.some(m => m.username === user))
-            );
+            let filtered: Project[] = [];
+            if (role === "ADMIN" || role === "VIEWER") {
+                filtered = res.data;
+            } else {
+                filtered = res.data.filter(
+                    (project) =>
+                        project.pi?.username === user ||
+                        (project.members && project.members.some(m => m.username === user))
+                );
+            }
             setProjects(filtered);
         } catch (err: any) {
             setError(
@@ -40,7 +44,7 @@ const ProjectsPage: React.FC = () => {
     useEffect(() => {
         fetchProjects();
         // eslint-disable-next-line
-    }, [user]);
+    }, [user, role]);
 
     const handleCreate = () => {
         setEditProject(null);
@@ -80,15 +84,20 @@ const ProjectsPage: React.FC = () => {
         }
     };
 
+    // Only ADMIN and PI/MEMBER can create/edit/delete
+    const canEdit = role === "ADMIN" || role === "PI" || role === "MEMBER";
+
     return (
         <div className="container">
             <h2>Projects</h2>
             {loading && <Loader />}
             {error && <div className="alert alert-danger my-3">{error}</div>}
-            <button className="btn btn-primary mb-3" onClick={handleCreate}>
-                Create Project
-            </button>
-            {showForm && (
+            {canEdit && (
+                <button className="btn btn-primary mb-3" onClick={handleCreate}>
+                    Create Project
+                </button>
+            )}
+            {showForm && canEdit && (
                 <div className="mb-3">
                     <ProjectForm
                         initial={editProject || {}}
@@ -119,13 +128,15 @@ const ProjectsPage: React.FC = () => {
                                 <th>Tags</th>
                                 <th>Start</th>
                                 <th>End</th>
-                                <th>Actions</th>
+                                {canEdit && <th>Actions</th>}
                             </tr>
                             </thead>
                             <tbody>
                             {projects.map((project) => (
                                 <tr key={project.id}>
-                                    <td>{project.title}</td>
+                                    <td>
+                                        {project.title}
+                                    </td>
                                     <td>{project.status}</td>
                                     <td>
                                         {project.pi?.fullName || project.pi?.username}
@@ -133,25 +144,27 @@ const ProjectsPage: React.FC = () => {
                                     <td>{project.tags}</td>
                                     <td>{project.startDate || "-"}</td>
                                     <td>{project.endDate || "-"}</td>
-                                    <td>
-                                        <button
-                                            className="btn btn-sm btn-warning me-2"
-                                            onClick={() => handleEdit(project)}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            className="btn btn-sm btn-danger"
-                                            disabled={deleteLoadingId === project.id}
-                                            onClick={() => handleDelete(project.id)}
-                                        >
-                                            {deleteLoadingId === project.id ? (
-                                                <span className="spinner-border spinner-border-sm" />
-                                            ) : (
-                                                "Delete"
-                                            )}
-                                        </button>
-                                    </td>
+                                    {canEdit && (
+                                        <td>
+                                            <button
+                                                className="btn btn-sm btn-warning me-2"
+                                                onClick={() => handleEdit(project)}
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                className="btn btn-sm btn-danger"
+                                                disabled={deleteLoadingId === project.id}
+                                                onClick={() => handleDelete(project.id)}
+                                            >
+                                                {deleteLoadingId === project.id ? (
+                                                    <span className="spinner-border spinner-border-sm" />
+                                                ) : (
+                                                    "Delete"
+                                                )}
+                                            </button>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                             </tbody>

@@ -18,4 +18,16 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+// Redirect to log in on 401/403 (expired/invalid token)
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default api;
