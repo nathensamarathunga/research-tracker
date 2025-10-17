@@ -1,19 +1,21 @@
 import axios from "axios";
 
-const instance = axios.create({
-    baseURL: "http://localhost:8080/api", // Adjust if your backend runs elsewhere
+// You may need to adjust this if your backend runs on a different host/port
+const api = axios.create({
+    baseURL: "/api", // proxy to backend in development (setup in package.json)
 });
 
-// Attach JWT token from localStorage to every request
-instance.interceptors.request.use(
+// Add JWT token to every request if present
+api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("token");
         if (token) {
-            config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
+            config.headers = config.headers || {};
+            config.headers['Authorization'] = `Bearer ${token}`;
         }
         return config;
     },
     (error) => Promise.reject(error)
 );
 
-export default instance;
+export default api;

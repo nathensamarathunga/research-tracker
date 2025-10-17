@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
@@ -10,7 +10,14 @@ const LoginPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, user } = useAuth();
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (user) {
+            navigate("/projects", { replace: true });
+        }
+    }, [user, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -19,7 +26,7 @@ const LoginPage: React.FC = () => {
         try {
             const res = await axios.post("/auth/login", { username, password });
             login(String(res.data)); // Save JWT token
-            navigate("/projects");
+            navigate("/projects", { replace: true });
         } catch (err: any) {
             setError("Invalid username or password");
         } finally {
