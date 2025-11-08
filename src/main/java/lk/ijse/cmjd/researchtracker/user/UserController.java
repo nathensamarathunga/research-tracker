@@ -22,6 +22,26 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    // Endpoint to get users by role (e.g. /api/users/role/PI)
+    @GetMapping("/role/{role}")
+    @PreAuthorize("hasAnyRole('ADMIN','PI')")
+    public ResponseEntity<List<User>> getUsersByRole(@PathVariable String role) {
+        try {
+            String roleUpper = role.toUpperCase();
+            // If requesting PI specifically, we can use the dedicated service method
+            if ("PI".equals(roleUpper)) {
+                return ResponseEntity.ok(userService.getPIUsers());
+            }
+            // Fallback: filter all users by role name
+            List<User> users = userService.getAllUsers().stream()
+                    .filter(u -> u.getRole().name().equalsIgnoreCase(roleUpper))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(users);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     // List all users for project membership (Admin and PI), EXCLUDING ADMINS
     @GetMapping("/all-for-membership")
     @PreAuthorize("hasAnyRole('ADMIN','PI')")
